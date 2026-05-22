@@ -1,0 +1,7 @@
+K_r:                [5.0, 5.0, 8.0]             # [1] P gain on position
+K_v:                [3.0, 3.0, 5.0]             # [1] D gain on position
+K_R:                [80.0, 80.0, 80.0]          # [1] P gain on attitude 
+K_o:                [16.0, 16.0, 16.0]          # [s] D gain on attitude
+dt_position:        0.01                        # [s] position controller dt
+chart_threshold:    0.05                        # [1] hysterisis for chart
+eps:                1.0e-6                      # [1] epsilon for thrust direction

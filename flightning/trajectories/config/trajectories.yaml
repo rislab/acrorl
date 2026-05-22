@@ -1,0 +1,57 @@
+constant_reference:
+  traj_1:
+    duration: 'env_duration'  # [s]
+    type: 'constant'          # []
+    eta: 1
+    flat_target: [0.0, 0.0, 0.0, 0.0] # [x, t, z, yaw]
+
+hopf_loop:
+  traj_1:
+    duration: 'env_duration'
+    type: 'loop'
+    eta: 1
+    angular_speed: 4.0  # [rad/s]
+    radius: 1.0         # [m]
+    tilt_angle: 1.2     # [rad]
+    dynamic_tilt: True
+
+min_snap_step:
+  traj_1:
+    duration: 'env_duration'
+    type: 'polynomial'
+    eta: 1
+    flat_target: [0.0, 0.0, 1.0, 0.0] # [x, t, z, yaw]
+
+nti_min_snap:
+  traj_1:
+    duration: 2.2
+    type: 'polynomial'
+    eta: 1
+    flat_target: [0.0, 0.0, 0.0, 0.0]
+    apogee: 0.6
+    segment_times: [0.0, 1.1, 2.2]
+    eta_sequence: [1, -1]
+    free_fall_idx: [1]
+
+  traj_2:
+    duration: 3.0
+    type: 'constant'
+    eta: -1
+    flat_target: [0.0, 0.0, 0.0, 0.0]
+
+itn_min_snap:
+  traj_1:
+    duration: 2.0
+    type: 'polynomial'
+    eta: -1
+    flat_target: [0.0, 0.0, 0.0, 0.0]
+    apogee: 0.35
+    segment_times: [0.0, 1.0, 2.0]
+    eta_sequence: [-1, 1]
+    free_fall_idx: [1]
+
+  traj_2:
+    duration: 3.0
+    type: 'constant'
+    eta: 1
+    flat_target: [0.0, 0.0, 0.0, 0.0]

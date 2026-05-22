@@ -1,0 +1,56 @@
+# mass properties
+
+mass:               1.135                         # [kg] 
+tbm_fr:             [ 0.081, -0.102, 0.0]         # [m] motor 1 pos in body frame, front right
+tbm_bl:             [-0.081,  0.102, 0.0]         # [m] motor 2 pos in body frame, back left
+tbm_fl:             [ 0.081,  0.102, 0.0]         # [m] motor 3 pos in body frame, front left
+tbm_br:             [-0.081, -0.102, 0.0]         # [m] motor 4 pos in body frame, back right
+inertia:            [0.00354, 0.00324, 0.00490]   # [kgm^2]
+motor_inertia:      4.0e-06                       # [kgm^2]
+
+# drag properties
+
+cd_h:               1.0                           # [1] horizontal drag coeff. range
+cd_v:               1.0                           # [1] vertical drag coeff.
+fA_x:               1.0e-2                        # [m^2] frontal area, x 
+fA_y:               1.2e-2                        # [m^2] frontal area, y 
+fA_z:               1.7e-2                        # [m^2] frontal area, z 
+rho:                1.2                           # [kg/m^3] air density
+g:                  [0.0, 0.0, -9.81]             # [m/s^2] acceleration due to gravity
+cd_dr:              True                          # Domain randomize drag coefficients?
+
+# transient motor modeling
+
+motor_omega_min:    -2200.0                       # [rad/s] minimum motor rate
+motor_omega_max:    2200.0                        # [rad/s] maximum motor rate
+motor_omega_0:      [-100.0, 100.0]               # [rad/s] switching/stationary point range for 
+motor_omega_dead:   15.0                          # [rad/s] deadband thickness
+motor_tau_pos:      0.050                         # [s] postive region time constant
+motor_tau_neg:      0.040                         # [s] negative region time constnat
+motor_tau_dr:       True                          # Domain randomize motor time constants?
+
+# steady-state motor modeling
+
+cT_pos:             [2.657e-6, -0.0022, 1.710]    # [N/(rad/s)^2, N/(rad/s), N] positive motor constants
+cT_neg:             [1.772e-6, -0.0019,-1.650]    # [N/(rad/s)^2, N/(rad/s), N] negative motor constants
+ms_pos:             0.014992                      # [Nm/N] moment scale in positive region
+ms_neg:             0.025888                      # [Nm/N] moment scale in negative region
+motor_xi:           500.0                         # [rad/s] switching region width for motor models
+full_thrust_model:  True                          # True: T = cT2*w*|w| + cT1*w + cT0, False: T = cT2*w*|w|
+cT_dr:              True                          # Domain randomize motor constants?
+
+# control
+
+motor_directions:   [1.0, 1.0, -1.0, -1.0]        # [CCW +, CW -] ordering: FR, BL, FL, BR (as above)
+g_bz_xi:            0.05                          # [1] switching region width for mixer and hovering speed map
+Q_u:                [1.0, 15.0, 15.0, 6.0]        # [thrust, roll, pitch, yaw] optimal control allocation weighting matrix
+action_max:         [ 7.5,  7.5,  7.5,  1.0]      # [Dx, Dy, Dz, eta] maximum learned policy action
+action_min:         [-7.5, -7.5, -7.5, -1.0]      # [Dx, Dy, Dz, eta] minimum learned policy action
+ref_controller:     hopf                          # [reference controller] types: 'lqr', 'hopf', 'pd'
+use_opt_alloc:      True                          # Use optimal control allocation?
+
+# simulation
+
+kick_frequency:     5.0                           # [Hz] velocity kick frequency 
+kick_magnitude:     0.0                           # [m/s] velocity kick magnitude  
+dt_low_level:       0.001                         # [s] low-level dynamics and attitude controller dt

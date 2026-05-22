@@ -1,0 +1,24 @@
+name: flightning
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - ffmpeg
+  - x264
+  - pip
+  - pip:
+      - jax[cuda12]
+      - flax
+      - optax
+      - jaxopt
+      - matplotlib
+      - numpy
+      - chex
+      - tqdm
+      - pyyaml
+      - jax_dataclasses
+      - distrax
+      - jupyterlab
+      - onnx
+      - onnxruntime
+      - jax2onnx
