@@ -193,7 +193,7 @@ class QuadrotorAnimator:
         num_poses: int = 7,
         flip_window: tuple = (0, 110),
         colorbar: bool = True,
-        
+        save_still_frames: bool = False,
     ):
         """
         Plot still frames with motor rate colour-coding.
@@ -291,9 +291,9 @@ class QuadrotorAnimator:
         self.ax.view_init(elev=20, azim=-30)
         # self.fig.suptitle(title, x=x_title, y=0.95)  #
 
-        if trial_name is not None:
+        if save_still_frames is not None:
             os.makedirs("plots", exist_ok=True)
-            path = Path("plots/" + trial_name + "_still_frames.pdf")
+            path = Path("plots/" + trial_name + "_still_frames.png")
             renderer = self.fig.canvas.get_renderer()
             tight_bbox = self.fig.get_tightbbox(renderer)
             expanded_bbox = mtransforms.Bbox.from_extents(

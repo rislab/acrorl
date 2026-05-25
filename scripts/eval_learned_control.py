@@ -177,7 +177,7 @@ def main():
         )
 
     metrics = eval_trajectories(
-        traj=transitions, trial_name=trial_name, goal_g_b=goal_g_b, goal_pos=goal_pos
+        traj=transitions, trial_name=trial_name, goal_g_b=goal_g_b, goal_pos=goal_pos, save_data=args.save_data
     )
     print("[EVAL_SCRIPT] Finished plotting the trained rollouts.")
     print_metrics(metrics, prefix="[EVAL_SCRIPT] ")
