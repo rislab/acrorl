@@ -1,5 +1,5 @@
 # **AcroRL: Learning Aggressive Quadrotor Inversion using Bidirectional Thrust**
-[![Paper](https://img.shields.io/badge/paper-AcroRL-blueviolet.svg)]()
+[![Paper](https://img.shields.io/badge/paper-AcroRL-blueviolet.svg)](https://arxiv.org/abs/2605.24301)
 [![YouTube](https://img.shields.io/badge/video-YouTube-red.svg)](https://youtu.be/7pPTKY5KKtU)
 [![Website](https://img.shields.io/badge/webpage-RISLabWebsite-green.svg)]()
 
