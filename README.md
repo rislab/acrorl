@@ -88,10 +88,13 @@ python3 export.py --policy-path /policies/my_policy --output ../policies/my_poli
 
 ```bibtex
 @misc{acrorl,
-  author={},
-  title={},
-  year={2026},
-  url={}
+      title={AcroRL: Learning Aggressive Quadrotor Inversion using Bidirectional Thrust}, 
+      author={Gabriel Rodriguez and Henri Sayag and Abhishek Rathod and John Stecklein and Siddharth Saha and Christopher Barngrover and Wennie Tabib},
+      year={2026},
+      eprint={2605.24301},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2605.24301}, 
 }
 ```
 
