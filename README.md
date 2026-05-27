@@ -1,7 +1,7 @@
 # **AcroRL: Learning Aggressive Quadrotor Inversion using Bidirectional Thrust**
 [![Paper](https://img.shields.io/badge/paper-AcroRL-blueviolet.svg)](https://arxiv.org/abs/2605.24301)
 [![YouTube](https://img.shields.io/badge/video-YouTube-red.svg)](https://youtu.be/7pPTKY5KKtU)
-[![Website](https://img.shields.io/badge/webpage-RISLabWebsite-green.svg)]()
+[![Website](https://img.shields.io/badge/webpage-RISLabWebsite-green.svg)](https://rislab.org/projects/2026-05-14-acro-rl.html)
 
 AcroRL is a simulation framework for learning aggressive quadrotor inversion maneuvers using bidirectional thrust and geometric control.
 
@@ -87,7 +87,7 @@ python3 export.py --policy-path /policies/my_policy --output ../policies/my_poli
 ## **Citation**
 
 ```bibtex
-@misc{acrorl,
+@misc{rodriguez2026acrorl,
       title={AcroRL: Learning Aggressive Quadrotor Inversion using Bidirectional Thrust}, 
       author={Gabriel Rodriguez and Henri Sayag and Abhishek Rathod and John Stecklein and Siddharth Saha and Christopher Barngrover and Wennie Tabib},
       year={2026},
