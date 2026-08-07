@@ -7,6 +7,24 @@ from flightning.envs.quad_env import QuadEnvState
 from .math import proj_gravity
 
 
+def _summary_stats(values: np.ndarray) -> dict:
+    """Compute mean, std, median, min, max, and a 95% CI (normal approx.) for a 1D array."""
+    n = values.shape[0]
+    mean = float(np.mean(values))
+    std = float(np.std(values, ddof=1)) if n > 1 else 0.0
+    sem = std / np.sqrt(n) if n > 1 else 0.0
+    ci95_halfwidth = 1.96 * sem
+    return {
+        "mean": mean,
+        "std": std,
+        "median": float(np.median(values)),
+        "min": float(np.min(values)),
+        "max": float(np.max(values)),
+        "ci95_lower": mean - ci95_halfwidth,
+        "ci95_upper": mean + ci95_halfwidth,
+    }
+
+
 def eval_trajectories(
     traj: EnvTransition, trial_name: str, goal_g_b: jnp.ndarray, goal_pos: jnp.ndarray, save_data: bool
 ):
@@ -63,38 +81,53 @@ def eval_trajectories(
     max_y_dev = jnp.max(jnp.abs(y_all) * valid, axis=1)
     max_z_dev = jnp.max(jnp.abs(z_all) * valid, axis=1)
 
-    # --- success ---
+    # --- success / failure / crash ---
     crashed = jnp.any(traj.terminated & valid, axis=1)
     success = (settled & ~crashed).astype(jnp.float32)
+    failed = ~settled | crashed
 
-    metrics = {
-        "pos_rmse": pos_rmse,
-        "settle_time": settle_time,
-        "max_x_dev": max_x_dev,
-        "max_y_dev": max_y_dev,
-        "max_z_dev": max_z_dev,
-        "success": success,
+    # --- move to numpy for summary statistics ---
+    pos_rmse_np = np.array(pos_rmse)
+    settle_time_np = np.array(settle_time)
+    max_x_dev_np = np.array(max_x_dev)
+    max_y_dev_np = np.array(max_y_dev)
+    max_z_dev_np = np.array(max_z_dev)
+    success_np = np.array(success)
+    crashed_np = np.array(crashed)
+    failed_np = np.array(failed)
+
+    success_rate = float(np.mean(success_np))
+    failure_count = int(np.sum(failed_np))
+    crash_rate = float(np.mean(crashed_np))
+
+    per_traj = {
+        "pos_rmse": pos_rmse_np,
+        "settle_time": settle_time_np,
+        "max_x_dev": max_x_dev_np,
+        "max_y_dev": max_y_dev_np,
+        "max_z_dev": max_z_dev_np,
+        "success": success_np,
+        "crashed": crashed_np,
+    }
+
+    # --- full summary stats (mean, std, median, min, max, 95% CI) per metric ---
+    summary = {
+        name: _summary_stats(values)
+        for name, values in per_traj.items()
+        if name not in ("success", "crashed")
     }
 
     metrics = {
-        "pos_rmse_mean": jnp.mean(pos_rmse),
-        "settle_time_mean": jnp.mean(settle_time),
-        "max_x_dev": jnp.max(max_x_dev),
-        "max_y_dev": jnp.max(max_y_dev),
-        "max_z_dev": jnp.max(max_z_dev),
-        "success_rate": jnp.mean(success),
-        "per_traj": metrics,
+        "num_trajs": num_trajs,
+        "success_rate": success_rate,
+        "failure_count": failure_count,
+        "crash_rate": crash_rate,
+        "summary": summary,
+        "per_traj": per_traj,
     }
 
     if data_filename is not None:
-
-        pos_rmse_np = np.array(pos_rmse)
-        settle_time_np = np.array(settle_time)
-        max_x_dev_np = np.array(max_x_dev)
-        max_y_dev_np = np.array(max_y_dev)
-        max_z_dev_np = np.array(max_z_dev)
-        success_np = np.array(success)
-
+        # --- per-trajectory raw metrics CSV ---
         per_traj_data = np.column_stack(
             [
                 np.arange(num_trajs),
@@ -104,35 +137,29 @@ def eval_trajectories(
                 max_y_dev_np,
                 max_z_dev_np,
                 success_np,
+                crashed_np.astype(np.float32),
             ]
         )
-
         np.savetxt(
             f"{data_filename}_metrics.csv",
             per_traj_data,
             delimiter=",",
-            header="traj_id,pos_rmse,settle_time,max_x_dev,max_y_dev,max_z_dev,success",
+            header="traj_id,pos_rmse,settle_time,max_x_dev,max_y_dev,max_z_dev,success,crashed",
             comments="",
         )
 
-        # --- summary CSV ---
-        summary_data = np.array(
-            [
-                metrics["pos_rmse_mean"],
-                metrics["settle_time_mean"],
-                metrics["max_x_dev"],
-                metrics["max_y_dev"],
-                metrics["max_z_dev"],
-                metrics["success_rate"],
-            ]
+        # --- summary CSV: one row per metric, columns = stat name ---
+        stat_names = ["mean", "std", "median", "min", "max", "ci95_lower", "ci95_upper"]
+        metric_names = list(summary.keys())
+        summary_rows = np.array(
+            [[summary[m][s] for s in stat_names] for m in metric_names]
         )
-
-        np.savetxt(
-            f"{data_filename}_mean_metrics.csv",
-            summary_data[None, :],
-            delimiter=",",
-            header="pos_rmse_mean,settle_time_mean,max_x_dev,max_y_dev,max_z_dev,success_rate",
-            comments="",
-        )
+        with open(f"{data_filename}_mean_metrics.csv", "w") as f:
+            f.write("metric," + ",".join(stat_names) + "\n")
+            for m, row in zip(metric_names, summary_rows):
+                f.write(m + "," + ",".join(f"{v:.6f}" for v in row) + "\n")
+            f.write(f"success_rate,{success_rate:.6f}\n")
+            f.write(f"failure_count,{failure_count}\n")
+            f.write(f"crash_rate,{crash_rate:.6f}\n")
 
     return metrics
