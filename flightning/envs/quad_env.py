@@ -9,7 +9,7 @@ import numpy as np
 from jax import numpy as jnp
 import jax.scipy.spatial.transform as transform
 
-
+from flightning import FLIGHTNING_PATH
 from flightning.objects import Quadrotor, QuadrotorState, WorldBox
 from flightning.controllers import HopfControllerState
 from flightning.trajectories import CompositeTrajectory, TRAJECTORY_REGISTRY
@@ -46,7 +46,7 @@ class QuadEnv(env_base.Env[QuadEnvState]):
         *,
         max_steps_in_episode=10000,
         trajectory_profile="constant_reference",
-        trajectory_path=None,
+        trajectory_path=(FLIGHTNING_PATH + "/trajectories/config/trajectories.yaml"),
         dt=0.02,
         delay=0.01,
         roll_pitch_range=0.1,
