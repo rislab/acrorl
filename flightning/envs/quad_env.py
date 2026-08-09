@@ -309,13 +309,13 @@ class QuadEnv(env_base.Env[QuadEnvState]):
         )
 
         obs = self._get_obs(next_state)
-        reward = self._get_reward(state, next_state, key)
+        reward = self._get_reward(state, next_state)
         terminated = self._is_colliding(next_state)
         truncated = jnp.greater_equal(next_state.step_idx, self.max_steps_in_episode)
         return EnvTransition(next_state, obs, reward, terminated, truncated, dict())
 
     def _get_reward(
-        self, last_state: QuadEnvState, next_state: QuadEnvState, key: chex.PRNGKey
+        self, last_state: QuadEnvState, next_state: QuadEnvState
     ) -> jax.Array:
         # from state
         action = next_state.last_actions[-1]
