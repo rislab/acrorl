@@ -7,7 +7,7 @@ from flightning.utils.pytrees import field_jnp, CustomPyTree
 
 @jdc.pytree_dataclass
 class CtbrControllerParams(CustomPyTree):
-    K_omega: jax.Array = field_jnp(jnp.array([10.0, 10.0, 21.0]))
+    K_o: jax.Array = field_jnp(jnp.array([10.0, 10.0, 21.0]))
 
 
 @jdc.pytree_dataclass
@@ -65,7 +65,7 @@ class CtbrController:
         # body-rate P control + Coriolis feedforward
         I = self.quadrotor.inertial_matrix
         omega_err = omega_cmd - omega
-        tau_d = I @ (jnp.diag(self.params.K_omega) @ omega_err) + jnp.cross(
+        tau_d = I @ (jnp.diag(self.params.K_o) @ omega_err) + jnp.cross(
             omega, I @ omega
         )
 

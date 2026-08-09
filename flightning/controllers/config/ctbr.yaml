@@ -1,2 +1,2 @@
-K_omega:            [10.0, 10.0, 21.0]          # [1] P gain on body rates
+K_o:              [10.0, 10.0, 21.0]          # [1] P gain on body rates
 
