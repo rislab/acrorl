@@ -90,8 +90,8 @@ class QuadCtbrEnv(env_base.Env[QuadCtbrEnvState]):
         nti_weights = jnp.array(
             [
                 4.000,      # position
-                6.000,      # orientation
-                0.100,      # hover
+                7.000,      # orientation
+                0.000,      # hover
                 -0.010,     # velocity
                 -0.005,     # angular velocity
                 -0.001,     # acceleration
@@ -102,8 +102,8 @@ class QuadCtbrEnv(env_base.Env[QuadCtbrEnvState]):
         itn_weights = jnp.array(
             [
                 4.000,      # position
-                6.000,      # orientation
-                0.100,      # hover
+                7.000,      # orientation
+                0.000,      # hover
                 -0.010,     # velocity
                 -0.005,     # angular velocity
                 -0.001,     # acceleration
@@ -127,7 +127,7 @@ class QuadCtbrEnv(env_base.Env[QuadCtbrEnvState]):
         )
         self.weights = jax.lax.select(start_inverted, itn_weights, nti_weights)
         self.stds = jax.lax.select(start_inverted, itn_stds, nti_stds)
-        self.crash_penalty = -5.0
+        self.crash_penalty = -10.0
 
         # quadrotor
         if drone_path:
@@ -360,7 +360,7 @@ class QuadCtbrEnv(env_base.Env[QuadCtbrEnvState]):
         # error signals
         pos_err = p - jnp.zeros_like(p)
         g_b_err = g_b - self.goal_g_b
-        hov_err = T - (-self.hovering_action[0])
+        hov_err = T - (-self.hovering_action[0] / 4.0)
         vel_err = v - jnp.zeros_like(v)
         omega_err = omega - jnp.zeros_like(omega)
         acc_err = acc - jnp.zeros_like(acc)
