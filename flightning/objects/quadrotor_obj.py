@@ -11,8 +11,11 @@ from flightning import FLIGHTNING_PATH
 from flightning.utils.pytrees import field_jnp, CustomPyTree
 from flightning.controllers import (
     HopfControllerParams,
-    HopfController,
     HopfControllerState,
+    HopfController,
+    CtbrControllerParams,
+    CtbrControllerState,
+    CtbrController
 )
 from flightning.utils.math import rotation_matrix_from_vector, proj_gravity, sigmoid
 from flightning.simulation import (
@@ -200,24 +203,39 @@ class Quadrotor:
             kick_frequency=self._kick_frequency, kick_magnitude=self._kick_magnitude
         )
 
-        hopf_param_path = os.path.join(
-            FLIGHTNING_PATH, "controllers", "config", "hopf.yaml"
-        )
-        with open(hopf_param_path, "r") as f:
-            cfg = yaml.safe_load(f)
-        controller_params = HopfControllerParams(
-            K_r=jnp.array(cfg["K_r"]),
-            K_v=jnp.array(cfg["K_v"]),
-            K_R=jnp.array(cfg["K_R"]),
-            K_o=jnp.array(cfg["K_o"]),
-            dt_position=cfg["dt_position"],
-            chart_threshold=cfg["chart_threshold"],
-            eps=cfg["eps"],
-        )
-        self._reference_controller = HopfController(
-            params=controller_params,
-            quadrotor=self,
-        )
+        if ref_controller == "hopf":
+            hopf_param_path = os.path.join(
+                FLIGHTNING_PATH, "controllers", "config", "hopf.yaml"
+            )
+            with open(hopf_param_path, "r") as f:
+                cfg = yaml.safe_load(f)
+            controller_params = HopfControllerParams(
+                K_r=jnp.array(cfg["K_r"]),
+                K_v=jnp.array(cfg["K_v"]),
+                K_R=jnp.array(cfg["K_R"]),
+                K_o=jnp.array(cfg["K_o"]),
+                dt_position=cfg["dt_position"],
+                chart_threshold=cfg["chart_threshold"],
+                eps=cfg["eps"],
+            )
+            self._reference_controller = HopfController(
+                params=controller_params,
+                quadrotor=self,
+            )
+        elif ref_controller == "ctbr":
+            ctbr_param_path = os.path.join(
+                FLIGHTNING_PATH, "controllers", "config", "ctbr.yaml"
+            )
+            with open(hopf_param_path, "r") as f:
+                cfg = yaml.safe_load(f)
+            controller_params = CtbrControllerParams(
+                K_o=jnp.array(cfg["K_o"]),
+            )
+            self._reference_controller = CtbrController(
+                params=controller_params,
+                quadrotor=self,
+            )
+
 
     @classmethod
     def from_yaml(cls, path: str) -> "Quadrotor":
@@ -483,5 +501,14 @@ if __name__ == "__main__":
     action = jnp.array([0.0, 0.0, 0.0, 1.0])
     eta = jnp.int32(1)
     dt = 0.1
-    state_new = quad.step(state, control_state, ref_state, eta, action, dt)
+    state_new = quad.step(
+        quadrotor_state=state, 
+        control_state=control_state, 
+        reference_quadrotor_state=ref_state, 
+        reference_eta=eta, 
+        reference_yaw=0.0,
+        reference_dyaw=0.0,
+        action=action, 
+        dt=dt
+    )
     print(state_new)
