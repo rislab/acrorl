@@ -226,7 +226,7 @@ class Quadrotor:
             ctbr_param_path = os.path.join(
                 FLIGHTNING_PATH, "controllers", "config", "ctbr.yaml"
             )
-            with open(hopf_param_path, "r") as f:
+            with open(ctbr_param_path, "r") as f:
                 cfg = yaml.safe_load(f)
             controller_params = CtbrControllerParams(
                 K_o=jnp.array(cfg["K_o"]),
